@@ -1,9 +1,11 @@
+mod ke100_result;
 mod s200b_result;
 mod t100_result;
 mod t110_result;
 mod t300_result;
 mod t31x_result;
 
+pub use ke100_result::*;
 pub use s200b_result::*;
 pub use t100_result::*;
 pub use t110_result::*;
@@ -50,6 +52,8 @@ pub enum Status {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "model")]
 pub enum ChildDeviceResult {
+    /// KE100 thermostatic radiator valve (TRV).
+    KE100(Box<KE100Result>),
     /// S200B button switch.
     S200B(Box<S200BResult>),
     /// T100 motion sensor.
@@ -71,12 +75,27 @@ pub enum ChildDeviceResult {
 impl DecodableResultExt for ChildDeviceResult {
     fn decode(self) -> Result<Self, Error> {
         match self {
-            ChildDeviceResult::S200B(device) => Ok(ChildDeviceResult::S200B(device.decode()?)),
-            ChildDeviceResult::T100(device) => Ok(ChildDeviceResult::T100(device.decode()?)),
-            ChildDeviceResult::T110(device) => Ok(ChildDeviceResult::T110(device.decode()?)),
-            ChildDeviceResult::T300(device) => Ok(ChildDeviceResult::T300(device.decode()?)),
-            ChildDeviceResult::T310(device) => Ok(ChildDeviceResult::T310(device.decode()?)),
-            ChildDeviceResult::T315(device) => Ok(ChildDeviceResult::T315(device.decode()?)),
+            ChildDeviceResult::KE100(device) => {
+                Ok(ChildDeviceResult::KE100(Box::new(device.decode()?)))
+            }
+            ChildDeviceResult::S200B(device) => {
+                Ok(ChildDeviceResult::S200B(Box::new(device.decode()?)))
+            }
+            ChildDeviceResult::T100(device) => {
+                Ok(ChildDeviceResult::T100(Box::new(device.decode()?)))
+            }
+            ChildDeviceResult::T110(device) => {
+                Ok(ChildDeviceResult::T110(Box::new(device.decode()?)))
+            }
+            ChildDeviceResult::T300(device) => {
+                Ok(ChildDeviceResult::T300(Box::new(device.decode()?)))
+            }
+            ChildDeviceResult::T310(device) => {
+                Ok(ChildDeviceResult::T310(Box::new(device.decode()?)))
+            }
+            ChildDeviceResult::T315(device) => {
+                Ok(ChildDeviceResult::T315(Box::new(device.decode()?)))
+            }
             ChildDeviceResult::Other => Ok(ChildDeviceResult::Other),
         }
     }

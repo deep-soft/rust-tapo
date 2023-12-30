@@ -6,7 +6,33 @@ file. This change log follows the conventions of
 
 ## [Rust Unreleased][Unreleased]
 
+### Changed
+
+- The `anyhow::anyhow!("Local hash does not match server hash")` error has been replaced with the more specific `tapo::TapoResponseError::InvalidCredentials` error.
+
+### Fixed
+
+- A handful of edge cases around the Klap Protocol that were causing panics have been fixed to return `tapo::TapoResponseError::SessionTimeout` or `tapo::TapoResponseError::InvalidResponse` errors instead.
+
 ## [Python Unreleased][Unreleased]
+
+### Changed
+
+- The `anyhow::anyhow!("Local hash does not match server hash")` error has been replaced with the more specific `tapo::TapoResponseError::InvalidCredentials` error.
+
+### Fixed
+
+- A handful of edge cases around the Klap Protocol that were causing panics have been fixed to return `tapo::TapoResponseError::SessionTimeout` or `tapo::TapoResponseError::InvalidResponse` errors instead.
+
+## [Rust v0.7.6][v0.7.6] - 2023-11-25
+
+### Added
+
+- Added support for the KE100 thermostatic radiator valve (TRV) devices (thanks to @pwoerndle).
+
+### Fixed
+
+- Fixed an issue that was preventing the `nickname` field from being decoded in the `get_device_info` results of child devices of the H100 hub.
 
 ## [Rust v0.7.5][v0.7.5] - 2023-11-05
 
@@ -219,6 +245,7 @@ let device = ApiClient::new(ip_address, tapo_username, tapo_password)?
 ### Initial Release of Tapo
 
 [Unreleased]: https://github.com/mihai-dinculescu/tapo
+[v0.7.6]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.6
 [v0.7.5]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.5
 [py-v0.1.3]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.1.3
 [py-v0.1.2]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.1.2
