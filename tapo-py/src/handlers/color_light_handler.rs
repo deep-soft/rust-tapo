@@ -1,19 +1,19 @@
 use std::sync::Arc;
 
 use pyo3::prelude::*;
-use tapo::PlugHandler;
+use tapo::{requests::Color, ColorLightHandler};
 use tokio::sync::Mutex;
 
 use crate::errors::ErrorWrapper;
 
 #[derive(Clone)]
-#[pyclass(name = "PlugHandler")]
-pub struct PyPlugHandler {
-    handler: Arc<Mutex<PlugHandler>>,
+#[pyclass(name = "ColorColorLightHandler")]
+pub struct PyColorLightHandler {
+    handler: Arc<Mutex<ColorLightHandler>>,
 }
 
-impl PyPlugHandler {
-    pub fn new(handler: PlugHandler) -> Self {
+impl PyColorLightHandler {
+    pub fn new(handler: ColorLightHandler) -> Self {
         Self {
             handler: Arc::new(Mutex::new(handler)),
         }
@@ -21,7 +21,7 @@ impl PyPlugHandler {
 }
 
 #[pymethods]
-impl PyPlugHandler {
+impl PyColorLightHandler {
     pub fn refresh_session<'a>(&'a self, py: Python<'a>) -> PyResult<&'a PyAny> {
         let handler = self.handler.clone();
         pyo3_asyncio::tokio::future_into_py(py, async move {
@@ -102,6 +102,67 @@ impl PyPlugHandler {
                 .await
                 .map_err(ErrorWrapper)?;
             Ok(result)
+        })
+    }
+
+    pub fn set_brightness<'a>(&'a self, py: Python<'a>, brightness: u8) -> PyResult<&'a PyAny> {
+        let handler = self.handler.clone();
+        pyo3_asyncio::tokio::future_into_py(py, async move {
+            handler
+                .lock()
+                .await
+                .set_brightness(brightness)
+                .await
+                .map_err(ErrorWrapper)?;
+            Ok(())
+        })
+    }
+
+    pub fn set_color<'a>(&'a self, py: Python<'a>, color: Color) -> PyResult<&'a PyAny> {
+        let handler = self.handler.clone();
+        pyo3_asyncio::tokio::future_into_py(py, async move {
+            handler
+                .lock()
+                .await
+                .set_color(color)
+                .await
+                .map_err(ErrorWrapper)?;
+            Ok(())
+        })
+    }
+
+    pub fn set_hue_saturation<'a>(
+        &'a self,
+        py: Python<'a>,
+        hue: u16,
+        saturation: u8,
+    ) -> PyResult<&'a PyAny> {
+        let handler = self.handler.clone();
+        pyo3_asyncio::tokio::future_into_py(py, async move {
+            handler
+                .lock()
+                .await
+                .set_hue_saturation(hue, saturation)
+                .await
+                .map_err(ErrorWrapper)?;
+            Ok(())
+        })
+    }
+
+    pub fn set_color_temperature<'a>(
+        &'a self,
+        py: Python<'a>,
+        color_temperature: u16,
+    ) -> PyResult<&'a PyAny> {
+        let handler = self.handler.clone();
+        pyo3_asyncio::tokio::future_into_py(py, async move {
+            handler
+                .lock()
+                .await
+                .set_color_temperature(color_temperature)
+                .await
+                .map_err(ErrorWrapper)?;
+            Ok(())
         })
     }
 }

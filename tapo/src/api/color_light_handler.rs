@@ -35,6 +35,18 @@ impl ColorLightHandler {
             .await
     }
 
+    /// *Hardware resets* the device.
+    ///
+    /// **Warning**: This action will reset the device to its factory settings.
+    /// The connection to the Wi-Fi network and the Tapo app will be lost,
+    /// and the device will need to be reconfigured.
+    ///
+    /// This feature is especially useful when the device is difficult to access
+    /// and requires reconfiguration.
+    pub async fn device_reset(&self) -> Result<(), Error> {
+        self.client.device_reset().await
+    }
+
     /// Returns *device info* as [`DeviceInfoColorLightResult`].
     /// It is not guaranteed to contain all the properties returned from the Tapo API.
     /// If the deserialization fails, or if a property that you care about it's not present, try [`ColorLightHandler::get_device_info_json`].
@@ -95,7 +107,7 @@ impl ColorLightHandler {
     ///
     /// # Arguments
     ///
-    /// * `color` - [crate::requests::Color]
+    /// * `color` - one of [crate::requests::Color] as defined in the Google Home app
     pub async fn set_color(&self, color: Color) -> Result<(), Error> {
         ColorLightSetDeviceInfoParams::new(&self.client)
             .color(color)

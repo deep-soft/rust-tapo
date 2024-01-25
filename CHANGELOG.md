@@ -6,22 +6,52 @@ file. This change log follows the conventions of
 
 ## [Rust Unreleased][Unreleased]
 
-### Changed
-
-- The `anyhow::anyhow!("Local hash does not match server hash")` error has been replaced with the more specific `tapo::TapoResponseError::InvalidCredentials` error.
-
-### Fixed
-
-- A handful of edge cases around the Klap Protocol that were causing panics have been fixed to return `tapo::TapoResponseError::SessionTimeout` or `tapo::TapoResponseError::InvalidResponse` errors instead.
-
 ## [Python Unreleased][Unreleased]
 
+### Added
+
+- Added support for the L530, L630, and L900 color light bulbs.
+
+## [Rust v0.7.8][v0.7.8] - 2024-01-22
+
+### Added
+
+- Added the `device_reset` method to all plugs and lights.
+
+### Fixed
+
+- The device info response for the L510, L520, and L610 devices has been fixed to have the `re_power_type` field as optional.
+
+## [Python v0.1.5][py-v0.1.5] - 2024-01-22
+
+### Added
+
+- Added the `device_reset` method to all plugs and lights.
+
+### Fixed
+
+- The device info response for the L510, L520, and L610 devices has been fixed to have the `re_power_type` field as optional.
+
+## [Rust v0.7.7][v0.7.7] - 2024-01-13
+
 ### Changed
 
 - The `anyhow::anyhow!("Local hash does not match server hash")` error has been replaced with the more specific `tapo::TapoResponseError::InvalidCredentials` error.
 
 ### Fixed
 
+- The `default_states` field that's part of the device info response has been changed for the L510, L520, and L610 devices to match the actual response from the device.
+- A handful of edge cases around the Klap Protocol that were causing panics have been fixed to return `tapo::TapoResponseError::SessionTimeout` or `tapo::TapoResponseError::InvalidResponse` errors instead.
+
+## [Python v0.1.4][py-v0.1.4] - 2024-01-13
+
+### Changed
+
+- The "Local hash does not match server hash" error has been replaced with the more specific `tapo::TapoResponseError::InvalidCredentials` error.
+
+### Fixed
+
+- The `default_states` field that's part of the device info response has been changed for the L510, L520, and L610 devices to match the actual response from the device.
 - A handful of edge cases around the Klap Protocol that were causing panics have been fixed to return `tapo::TapoResponseError::SessionTimeout` or `tapo::TapoResponseError::InvalidResponse` errors instead.
 
 ## [Rust v0.7.6][v0.7.6] - 2023-11-25
@@ -245,6 +275,10 @@ let device = ApiClient::new(ip_address, tapo_username, tapo_password)?
 ### Initial Release of Tapo
 
 [Unreleased]: https://github.com/mihai-dinculescu/tapo
+[v0.7.8]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.8
+[py-v0.1.5]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.1.5
+[v0.7.7]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.7
+[py-v0.1.4]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.1.4
 [v0.7.6]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.6
 [v0.7.5]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.5
 [py-v0.1.3]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.1.3
