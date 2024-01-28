@@ -8,9 +8,26 @@ file. This change log follows the conventions of
 
 ## [Python Unreleased][Unreleased]
 
+## [Rust v0.7.9][v0.7.9] - 2024-01-27
+
+### Changed
+
+- The `send()` method of the `.set()` API now takes a reference to the device handler in order to allow for better ergonomics.
+
+### Fixed
+
+- The device info response for the L510, L520, and L610 devices has been fixed.
+
+## [Python v0.2.0][py-v0.2.0] - 2024-01-27
+
 ### Added
 
 - Added support for the L530, L630, and L900 color light bulbs.
+
+### Fixed
+
+- Fixed a misconfiguration that was preventing the sdist package from working properly.
+- The device info response for the L510, L520, and L610 devices has been fixed.
 
 ## [Rust v0.7.8][v0.7.8] - 2024-01-22
 
@@ -275,6 +292,8 @@ let device = ApiClient::new(ip_address, tapo_username, tapo_password)?
 ### Initial Release of Tapo
 
 [Unreleased]: https://github.com/mihai-dinculescu/tapo
+[v0.7.9]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.9
+[py-v0.2.0]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.2.0
 [v0.7.8]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.8
 [py-v0.1.5]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.1.5
 [v0.7.7]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.7
