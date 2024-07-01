@@ -1,4 +1,4 @@
-use chrono::{DateTime, Duration, NaiveDateTime, Timelike, Utc};
+use chrono::{DateTime, Duration, Timelike, Utc};
 use itertools::izip;
 use serde::{Deserialize, Serialize};
 
@@ -8,6 +8,7 @@ use crate::responses::{decode_value, DecodableResultExt, Status, TapoResponseExt
 /// Temperature unit.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(get_all))]
 #[allow(missing_docs)]
 pub enum TemperatureUnit {
     Celsius,
@@ -16,14 +17,35 @@ pub enum TemperatureUnit {
 
 /// T310/T315 temperature & humidity sensor.
 ///
-/// Specific properties: `current_humidity`, `current_temperature`, `temperature_unit`, `current_humidity_exception`, `current_temperature_exception`.
+/// Specific properties: `current_temperature`, `temperature_unit`,
+/// `current_temperature_exception`, `current_humidity`, `current_humidity_exception`,
+/// `report_interval`, `last_onboarding_timestamp`, `status_follow_edge`.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(get_all))]
 #[allow(missing_docs)]
 pub struct T31XResult {
+    // Common properties to all Hub child devices.
     pub at_low_battery: bool,
     pub avatar: String,
     pub bind_count: u32,
     pub category: String,
+    pub device_id: String,
+    pub fw_ver: String,
+    pub hw_id: String,
+    pub hw_ver: String,
+    pub jamming_rssi: i16,
+    pub jamming_signal_level: u8,
+    pub mac: String,
+    pub nickname: String,
+    pub oem_id: String,
+    pub parent_device_id: String,
+    pub region: String,
+    pub rssi: i16,
+    pub signal_level: u8,
+    pub specs: String,
+    pub status: Status,
+    pub r#type: String,
+    // Specific properties to this device.
     /// This value will be `0` when the current humidity is within the comfort zone.
     /// When the current humidity value falls outside the comfort zone, this value
     /// will be the difference between the current humidity and the lower or upper bound of the comfort zone.
@@ -36,29 +58,25 @@ pub struct T31XResult {
     pub current_temperature_exception: f32,
     #[serde(rename = "current_temp")]
     pub current_temperature: f32,
-    pub device_id: String,
-    pub fw_ver: String,
-    pub hw_id: String,
-    pub hw_ver: String,
-    pub jamming_rssi: i16,
-    pub jamming_signal_level: u8,
     #[serde(rename = "lastOnboardingTimestamp")]
     pub last_onboarding_timestamp: u64,
-    pub mac: String,
-    pub nickname: String,
-    pub oem_id: String,
-    pub parent_device_id: String,
-    pub region: String,
     /// The time in seconds between each report.
     pub report_interval: u32,
-    pub rssi: i16,
-    pub signal_level: u8,
-    pub specs: String,
     pub status_follow_edge: bool,
-    pub status: Status,
     #[serde(rename = "temp_unit")]
     pub temperature_unit: TemperatureUnit,
-    pub r#type: String,
+}
+
+#[cfg(feature = "python")]
+#[pyo3::pymethods]
+impl T31XResult {
+    /// Gets all the properties of this result as a dictionary.
+    pub fn to_dict(&self, py: pyo3::Python) -> pyo3::PyResult<pyo3::Py<pyo3::types::PyDict>> {
+        let value = serde_json::to_value(self)
+            .map_err(|e| pyo3::exceptions::PyException::new_err(e.to_string()))?;
+
+        crate::python::serde_object_to_py_dict(py, &value)
+    }
 }
 
 impl TapoResponseExt for T31XResult {}
@@ -114,9 +132,7 @@ impl TryFrom<TemperatureHumidityRecordsRaw> for TemperatureHumidityRecords {
     type Error = anyhow::Error;
 
     fn try_from(raw: TemperatureHumidityRecordsRaw) -> Result<Self, Self::Error> {
-        let datetime = NaiveDateTime::from_timestamp_opt(raw.local_time, 0)
-            .unwrap_or_default()
-            .and_utc();
+        let datetime = DateTime::from_timestamp(raw.local_time, 0).unwrap_or_default();
 
         let interval_minute = if datetime.minute() >= 45 {
             45
@@ -160,7 +176,7 @@ impl TryFrom<TemperatureHumidityRecordsRaw> for TemperatureHumidityRecords {
             }
 
             interval_time = interval_time
-                .checked_sub_signed(Duration::minutes(15))
+                .checked_sub_signed(Duration::try_minutes(15).unwrap())
                 .ok_or_else(|| anyhow::anyhow!("Failed to subtract from interval"))?;
         }
 
@@ -176,6 +192,8 @@ impl TryFrom<TemperatureHumidityRecordsRaw> for TemperatureHumidityRecords {
 
 #[cfg(test)]
 mod tests {
+    use chrono::NaiveDateTime;
+
     use super::*;
 
     #[test]

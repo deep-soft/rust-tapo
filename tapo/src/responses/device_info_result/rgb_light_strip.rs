@@ -1,13 +1,12 @@
 use serde::{Deserialize, Serialize};
 
 use crate::error::Error;
-use crate::requests::LightingEffect;
 use crate::responses::{decode_value, DecodableResultExt, DefaultStateType, TapoResponseExt};
 
-/// Device info of Tapo L920 and L930. Superset of [`crate::responses::DeviceInfoGenericResult`].
+/// Device info of Tapo L900. Superset of [`crate::responses::DeviceInfoGenericResult`].
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[allow(missing_docs)]
-pub struct DeviceInfoColorLightStripResult {
+pub struct DeviceInfoRgbLightStripResult {
     //
     // Inherited from DeviceInfoGenericResult
     //
@@ -27,7 +26,6 @@ pub struct DeviceInfoColorLightStripResult {
     pub specs: String,
     pub lang: String,
     pub device_on: bool,
-    pub overheated: bool,
     pub nickname: String,
     pub avatar: String,
     pub has_set_location_info: bool,
@@ -39,17 +37,18 @@ pub struct DeviceInfoColorLightStripResult {
     // Unique to this device
     //
     pub brightness: u8,
-    pub hue: Option<u16>,
-    pub saturation: Option<u16>,
-    pub color_temp: u16,
     pub color_temp_range: [u16; 2],
+    pub color_temp: u16,
     /// The default state of a device to be used when internet connectivity is lost after a power cut.
-    pub default_states: DefaultColorLightStripState,
+    pub default_states: DefaultRgbLightStripState,
+    pub hue: Option<u16>,
+    pub overheated: bool,
+    pub saturation: Option<u16>,
 }
 
-impl TapoResponseExt for DeviceInfoColorLightStripResult {}
+impl TapoResponseExt for DeviceInfoRgbLightStripResult {}
 
-impl DecodableResultExt for DeviceInfoColorLightStripResult {
+impl DecodableResultExt for DeviceInfoRgbLightStripResult {
     fn decode(mut self) -> Result<Self, Error> {
         self.ssid = decode_value(&self.ssid)?;
         self.nickname = decode_value(&self.nickname)?;
@@ -61,18 +60,17 @@ impl DecodableResultExt for DeviceInfoColorLightStripResult {
 /// Color Light Strip Default State.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[allow(missing_docs)]
-pub struct DefaultColorLightStripState {
+pub struct DefaultRgbLightStripState {
     pub r#type: DefaultStateType,
-    pub state: ColorLightStripState,
+    pub state: RgbLightStripState,
 }
 
 /// Color Light Strip State.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[allow(missing_docs)]
-pub struct ColorLightStripState {
+pub struct RgbLightStripState {
     pub brightness: Option<u8>,
     pub hue: Option<u16>,
     pub saturation: Option<u16>,
     pub color_temp: Option<u16>,
-    pub lighting_effect: Option<LightingEffect>,
 }

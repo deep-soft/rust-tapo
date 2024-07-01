@@ -1,6 +1,7 @@
 """Tapo API Client.
 
-Tested with light bulbs (L510, L520, L610) and plugs (P100, P105, P110, P115).
+Tested with light bulbs (L510, L520, L530, L610, L630), plugs (P100, P105, P110, P115),
+hubs (H100), switches (S200B) and sensors (KE100, T100, T110, T300, T310, T315).
 
 Example:
     ```python
@@ -21,16 +22,18 @@ Example:
 See [more examples](https://github.com/mihai-dinculescu/tapo/tree/main/tapo-py/examples).
 """
 
-from .generic_device_handler import GenericDeviceHandler
-from .light_handler import LightHandler
 from .color_light_handler import ColorLightHandler
-from .plug_handler import PlugHandler
+from .generic_device_handler import GenericDeviceHandler
+from .hub_handler import HubHandler
+from .light_handler import LightHandler
 from .plug_energy_monitoring_handler import PlugEnergyMonitoringHandler
+from .plug_handler import PlugHandler
 
 class ApiClient:
     """Tapo API Client.
 
-    Tested with light bulbs (L510, L520, L610) and plugs (P100, P105, P110, P115).
+    Tested with light bulbs (L510, L520, L530, L610, L630), plugs (P100, P105, P110, P115),
+    hubs (H100), switches (S200B) and sensors (KE100, T100, T110, T300, T310, T315).
 
     Example:
         ```python
@@ -51,12 +54,13 @@ class ApiClient:
     See [more examples](https://github.com/mihai-dinculescu/tapo/tree/main/tapo-py/examples).
     """
 
-    def __init__(self, tapo_username: str, tapo_password: str) -> None:
+    def __init__(self, tapo_username: str, tapo_password: str, timeout_s: int = 30) -> None:
         """Returns a new instance of `ApiClient`.
 
         Args:
-            tapo_username (str): The Tapo username
-            tapo_password (str): The Tapo password
+            tapo_username (str): The Tapo username.
+            tapo_password (str): The Tapo password.
+            timeout_s (int): The connection timeout in seconds. The default value is 30 seconds.
 
         Returns:
             ApiClient: Tapo API Client.
@@ -79,6 +83,7 @@ class ApiClient:
 
         See [more examples](https://github.com/mihai-dinculescu/tapo/tree/main/tapo-py/examples).
         """
+
     async def generic_device(self, ip_address: str) -> GenericDeviceHandler:
         """Specializes the given `ApiClient` into an authenticated `GenericDeviceHandler`.
 
@@ -97,6 +102,7 @@ class ApiClient:
             await device.on()
             ```
         """
+
     async def l510(self, ip_address: str) -> LightHandler:
         """Specializes the given `ApiClient` into an authenticated `LightHandler`.
 
@@ -114,6 +120,7 @@ class ApiClient:
             await device.on()
             ```
         """
+
     async def l520(self, ip_address: str) -> LightHandler:
         """Specializes the given `ApiClient` into an authenticated `LightHandler`.
 
@@ -131,6 +138,7 @@ class ApiClient:
             await device.on()
             ```
         """
+
     async def l530(self, ip_address: str) -> ColorLightHandler:
         """Specializes the given `ApiClient` into an authenticated `ColorLightHandler`.
 
@@ -148,6 +156,7 @@ class ApiClient:
             await device.on()
             ```
         """
+
     async def l610(self, ip_address: str) -> LightHandler:
         """Specializes the given `ApiClient` into an authenticated `LightHandler`.
 
@@ -165,6 +174,7 @@ class ApiClient:
             await device.on()
             ```
         """
+
     async def l630(self, ip_address: str) -> ColorLightHandler:
         """Specializes the given `ApiClient` into an authenticated `ColorLightHandler`.
 
@@ -182,23 +192,7 @@ class ApiClient:
             await device.on()
             ```
         """
-    async def l900(self, ip_address: str) -> ColorLightHandler:
-        """Specializes the given `ApiClient` into an authenticated `ColorLightHandler`.
 
-        Args:
-            ip_address (str): The IP address of the device
-
-        Returns:
-            ColorLightHandler: Handler for the [L530](https://www.tapo.com/en/search/?q=L530), [L630](https://www.tapo.com/en/search/?q=L630) and [L900](https://www.tapo.com/en/search/?q=L900) devices.
-
-        Example:
-            ```python
-            client = ApiClient("tapo-username@example.com", "tapo-password")
-            device = await client.l900("192.168.1.100")
-
-            await device.on()
-            ```
-        """
     async def p100(self, ip_address: str) -> PlugHandler:
         """Specializes the given `ApiClient` into an authenticated `PlugHandler`.
 
@@ -216,6 +210,7 @@ class ApiClient:
             await device.on()
             ```
         """
+
     async def p105(self, ip_address: str) -> PlugHandler:
         """Specializes the given `ApiClient` into an authenticated `PlugHandler`.
 
@@ -233,6 +228,7 @@ class ApiClient:
             await device.on()
             ```
         """
+
     async def p110(self, ip_address: str) -> PlugEnergyMonitoringHandler:
         """Specializes the given `ApiClient` into an authenticated `PlugEnergyMonitoringHandler`.
 
@@ -250,6 +246,7 @@ class ApiClient:
             await device.on()
             ```
         """
+
     async def p115(self, ip_address: str) -> PlugEnergyMonitoringHandler:
         """Specializes the given `ApiClient` into an authenticated `PlugEnergyMonitoringHandler`.
 
@@ -265,5 +262,24 @@ class ApiClient:
             device = await client.p115("192.168.1.100")
 
             await device.on()
+            ```
+        """
+
+    async def h100(self, ip_address: str) -> HubHandler:
+        """Specializes the given `ApiClient` into an authenticated `HubHandler`.
+
+        Args:
+            ip_address (str): The IP address of the device
+
+        Returns:
+            HubHandler: Handler for the [H100](https://www.tapo.com/en/search/?q=H100) hubs.
+
+        Example:
+            ```python
+            client = ApiClient("tapo-username@example.com", "tapo-password")
+            hub = await client.h100("192.168.1.100")
+
+            child_device_list = await hub.get_child_device_list()
+            print(f"Child device list: {child_device_list.to_dict()}")
             ```
         """
