@@ -1,9 +1,14 @@
 from typing import Optional
 
 from tapo.responses.device_info_result.default_state import DefaultStateType
+from tapo.responses.device_info_result.power_status import (
+    OvercurrentStatus,
+    OverheatStatus,
+    PowerProtectionStatus,
+)
 
-class DeviceInfoColorLightResult:
-    """Device info of Tapo L530, L630 and L900. Superset of `GenericDeviceInfoResult`."""
+class DeviceInfoPlugEnergyMonitoringResult:
+    """Device info of Tapo P110 and P115. Superset of `GenericDeviceInfoResult`."""
 
     device_id: str
     type: str
@@ -32,15 +37,11 @@ class DeviceInfoColorLightResult:
     time_diff: Optional[int]
 
     # Unique to this device
-    brightness: int
-    color_temp: int
-    default_states: DefaultColorLightState
+    default_states: DefaultPlugState
     """The default state of a device to be used when internet connectivity is lost after a power cut."""
-    dynamic_light_effect_enable: bool
-    dynamic_light_effect_id: Optional[str]
-    hue: Optional[int]
-    overheated: bool
-    saturation: Optional[int]
+    overcurrent_status: OvercurrentStatus
+    overheat_status: OverheatStatus
+    power_protection_status: PowerProtectionStatus
 
     def to_dict(self) -> dict:
         """Gets all the properties of this result as a dictionary.
@@ -49,16 +50,13 @@ class DeviceInfoColorLightResult:
             dict: The result as a dictionary.
         """
 
-class DefaultColorLightState:
-    """Color Light Default State."""
+class DefaultPlugState:
+    """Default Plug State."""
 
     type: DefaultStateType
-    state: ColorLightState
+    state: PlugState
 
-class ColorLightState:
-    """Color Light State."""
+class PlugState:
+    """Plug State."""
 
-    brightness: int
-    hue: Optional[int]
-    saturation: Optional[int]
-    color_temp: int
+    on: Optional[bool]

@@ -8,6 +8,40 @@ file. This change log follows the conventions of
 
 ## [Python Unreleased][Unreleased]
 
+## [Rust v0.7.14][v0.7.14] - 2024-08-31
+
+### Changed
+
+- `DeviceInfoPlugEnergyMonitoringResult` has been added to support the P110 and P115 devices, which have different responses compared to the P100 and P105 devices.
+
+### Fixed
+
+- `DeviceInfoPlugResult` has been updated to correctly support the P100 and P105 devices.
+
+## [Python v0.4.0][py-v0.4.0] - 2024-08-31
+
+### Changed
+
+- `DeviceInfoPlugEnergyMonitoringResult` has been added to support the P110 and P115 devices, which have different responses compared to the P100 and P105 devices.
+
+### Fixed
+
+- Resolved an issue that led to unrecoverable process hangs when a device request timed out.
+- The concurrency of device handlers has been significantly enhanced by replacing all `Mutex` instances with `RwLock`.
+- `DeviceInfoPlugResult` has been updated to correctly support the P100 and P105 devices.
+
+## [Rust v0.7.13][v0.7.13] - 2024-08-26
+
+### Changed
+
+- To align with the latest API updates, the `overheated` field for plugs has been replaced by three enums: `overcurrent_status`, `overheat_status`, and `power_protection_status` (thanks to @padenot).
+
+## [Python v0.3.2][py-v0.3.2] - 2024-08-26
+
+### Changed
+
+- To align with the latest API updates, the `overheated` field for plugs has been replaced by three enums: `overcurrent_status`, `overheat_status`, and `power_protection_status`.
+
 ## [Rust v0.7.12][v0.7.12] - 2024-06-27
 
 ### Changed
@@ -366,6 +400,10 @@ let device = ApiClient::new(ip_address, tapo_username, tapo_password)?
 ### Initial Release of Tapo
 
 [Unreleased]: https://github.com/mihai-dinculescu/tapo
+[v0.7.14]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.14
+[py-v0.4.0]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.4.0
+[v0.7.13]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.13
+[py-v0.3.2]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.3.2
 [v0.7.12]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.12
 [py-v0.3.1]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.3.1
 [v0.7.11]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.11

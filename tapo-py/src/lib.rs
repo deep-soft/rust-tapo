@@ -1,6 +1,7 @@
 mod api_client;
 mod errors;
 mod handlers;
+mod runtime;
 
 use pyo3::prelude::*;
 
@@ -15,8 +16,9 @@ use tapo::responses::{
     ColorLightState, CurrentPowerResult, DefaultBrightnessState, DefaultColorLightState,
     DefaultLightState, DefaultPlugState, DefaultPowerType, DefaultStateType,
     DeviceInfoColorLightResult, DeviceInfoGenericResult, DeviceInfoHubResult,
-    DeviceInfoLightResult, DeviceInfoPlugResult, DeviceUsageEnergyMonitoringResult,
-    DeviceUsageResult, EnergyDataResult, EnergyUsageResult, KE100Result, PlugState, S200BResult,
+    DeviceInfoLightResult, DeviceInfoPlugEnergyMonitoringResult, DeviceInfoPlugResult,
+    DeviceUsageEnergyMonitoringResult, DeviceUsageResult, EnergyDataResult, EnergyUsageResult,
+    KE100Result, OvercurrentStatus, OverheatStatus, PlugState, PowerProtectionStatus, S200BResult,
     Status, T100Result, T110Result, T300Result, T31XResult, TemperatureUnit, TemperatureUnitKE100,
     UsageByPeriodResult, WaterLeakStatus,
 };
@@ -49,6 +51,9 @@ fn tapo_py(py: Python, module: &Bound<'_, PyModule>) -> PyResult<()> {
     responses.add_class::<DeviceUsageResult>()?;
     responses.add_class::<EnergyDataResult>()?;
     responses.add_class::<EnergyUsageResult>()?;
+    responses.add_class::<OvercurrentStatus>()?;
+    responses.add_class::<OverheatStatus>()?;
+    responses.add_class::<PowerProtectionStatus>()?;
     responses.add_class::<UsageByPeriodResult>()?;
 
     // responses: device info: color light
@@ -79,8 +84,9 @@ fn tapo_py(py: Python, module: &Bound<'_, PyModule>) -> PyResult<()> {
     responses.add_class::<DefaultLightState>()?;
 
     // responses: plug
-    responses.add_class::<DeviceInfoPlugResult>()?;
     responses.add_class::<DefaultPlugState>()?;
+    responses.add_class::<DeviceInfoPlugEnergyMonitoringResult>()?;
+    responses.add_class::<DeviceInfoPlugResult>()?;
     responses.add_class::<PlugState>()?;
 
     module.add_submodule(&requests)?;
