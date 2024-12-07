@@ -2,7 +2,9 @@ use std::fmt;
 
 use async_trait::async_trait;
 use base64::{engine::general_purpose, Engine as _};
-use log::debug;
+use log::{debug, trace};
+use rand::rngs::StdRng;
+use rand::SeedableRng;
 use reqwest::header::COOKIE;
 use reqwest::Client;
 use serde::de::DeserializeOwned;
@@ -71,7 +73,7 @@ impl TapoProtocolExt for PassthroughProtocol {
                 session
                     .token
                     .as_ref()
-                    .ok_or_else(|| anyhow::anyhow!("token shouldn't be None"))?
+                    .ok_or_else(|| anyhow::anyhow!("Token shouldn not be None"))?
             )
         } else {
             session.url.clone()
@@ -110,7 +112,7 @@ impl TapoProtocolExt for PassthroughProtocol {
 
         let inner_response_decrypted = session.cipher.decrypt(&inner_response_encrypted)?;
 
-        debug!("Device inner response decrypted: {inner_response_decrypted}");
+        trace!("Device inner response (raw): {inner_response_decrypted}");
 
         let inner_response: TapoResponse<R> = serde_json::from_str(&inner_response_decrypted)?;
 
@@ -132,7 +134,7 @@ impl PassthroughProtocol {
     pub fn new(client: Client) -> Result<Self, Error> {
         Ok(Self {
             client,
-            key_pair: PassthroughKeyPair::new()?,
+            key_pair: PassthroughKeyPair::new(StdRng::from_entropy())?,
             session: None,
         })
     }

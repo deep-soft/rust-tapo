@@ -194,6 +194,31 @@ impl ApiClient {
         Ok(ColorLightHandler::new(self))
     }
 
+    /// Specializes the given [`ApiClient`] into an authenticated [`ColorLightHandler`].
+    ///
+    /// # Arguments
+    ///
+    /// * `ip_address` - the IP address of the device
+    ///
+    /// # Example
+    ///
+    /// ```rust,no_run
+    /// # use tapo::ApiClient;
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// let device = ApiClient::new("tapo-username@example.com", "tapo-password")
+    ///     .l535("192.168.1.100")
+    ///     .await?;
+    /// device.on().await?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub async fn l535(mut self, ip_address: impl Into<String>) -> Result<ColorLightHandler, Error> {
+        self.login(ip_address).await?;
+
+        Ok(ColorLightHandler::new(self))
+    }
+
     /// Specializes the given [`ApiClient`] into an authenticated [`LightHandler`].
     ///
     /// # Arguments
@@ -406,32 +431,6 @@ impl ApiClient {
         Ok(PlugEnergyMonitoringHandler::new(self))
     }
 
-    /// Specializes the given [`ApiClient`] into an authenticated [`PowerStripHandler`].
-    ///
-    /// # Arguments
-    ///
-    /// * `ip_address` - the IP address of the device
-    ///
-    /// # Example
-    ///
-    /// ```rust,no_run
-    /// # use tapo::ApiClient;
-    /// # #[tokio::main]
-    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    /// let device = ApiClient::new("tapo-username@example.com", "tapo-password")
-    ///     .p300("192.168.1.100")
-    ///     .await?;
-    /// let child_device_list = device.get_child_device_list().await?;
-    /// println!("Child device list: {child_device_list:?}");
-    /// # Ok(())
-    /// # }
-    /// ```
-    pub async fn p300(mut self, ip_address: impl Into<String>) -> Result<PowerStripHandler, Error> {
-        self.login(ip_address).await?;
-
-        Ok(PowerStripHandler::new(self))
-    }
-
     /// Specializes the given [`ApiClient`] into an authenticated [`PlugEnergyMonitoringHandler`].
     ///
     /// # Arguments
@@ -458,6 +457,58 @@ impl ApiClient {
         self.login(ip_address).await?;
 
         Ok(PlugEnergyMonitoringHandler::new(self))
+    }
+
+    /// Specializes the given [`ApiClient`] into an authenticated [`PowerStripHandler`].
+    ///
+    /// # Arguments
+    ///
+    /// * `ip_address` - the IP address of the device
+    ///
+    /// # Example
+    ///
+    /// ```rust,no_run
+    /// # use tapo::ApiClient;
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// let device = ApiClient::new("tapo-username@example.com", "tapo-password")
+    ///     .p300("192.168.1.100")
+    ///     .await?;
+    /// let child_device_list = device.get_child_device_list().await?;
+    /// println!("Child device list: {child_device_list:?}");
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub async fn p300(mut self, ip_address: impl Into<String>) -> Result<PowerStripHandler, Error> {
+        self.login(ip_address).await?;
+
+        Ok(PowerStripHandler::new(self))
+    }
+
+    /// Specializes the given [`ApiClient`] into an authenticated [`PowerStripHandler`].
+    ///
+    /// # Arguments
+    ///
+    /// * `ip_address` - the IP address of the device
+    ///
+    /// # Example
+    ///
+    /// ```rust,no_run
+    /// # use tapo::ApiClient;
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// let device = ApiClient::new("tapo-username@example.com", "tapo-password")
+    ///     .p304("192.168.1.100")
+    ///     .await?;
+    /// let child_device_list = device.get_child_device_list().await?;
+    /// println!("Child device list: {child_device_list:?}");
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub async fn p304(mut self, ip_address: impl Into<String>) -> Result<PowerStripHandler, Error> {
+        self.login(ip_address).await?;
+
+        Ok(PowerStripHandler::new(self))
     }
 
     /// Specializes the given [`ApiClient`] into an authenticated [`HubHandler`].
@@ -678,7 +729,7 @@ impl ApiClient {
 
         self.protocol.as_mut().ok_or_else(|| {
             Error::Other(anyhow::anyhow!(
-                "The protocol should have been initialized already."
+                "The protocol should have been initialized already"
             ))
         })
     }
@@ -686,7 +737,7 @@ impl ApiClient {
     fn get_protocol(&self) -> Result<&TapoProtocol, Error> {
         self.protocol.as_ref().ok_or_else(|| {
             Error::Other(anyhow::anyhow!(
-                "The protocol should have been initialized already."
+                "The protocol should have been initialized already"
             ))
         })
     }

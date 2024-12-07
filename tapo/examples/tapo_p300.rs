@@ -1,4 +1,4 @@
-/// P300 Example
+/// P300 and P304 Example
 use std::{env, thread, time::Duration};
 
 use log::{info, LevelFilter};
@@ -47,6 +47,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         plug.off().await?;
 
         info!("Waiting 2 seconds...");
+        thread::sleep(Duration::from_secs(2));
     }
 
     Ok(())

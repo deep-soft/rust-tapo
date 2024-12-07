@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::Error;
 use crate::responses::{decode_value, DecodableResultExt, DefaultStateType, TapoResponseExt};
 
-/// Device info of Tapo L530, L630 and L900. Superset of [`crate::responses::DeviceInfoGenericResult`].
+/// Device info of Tapo L530, L535 and L630. Superset of [`crate::responses::DeviceInfoGenericResult`].
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass(get_all))]
 #[allow(missing_docs)]
@@ -27,7 +27,7 @@ pub struct DeviceInfoColorLightResult {
     pub specs: String,
     pub lang: String,
     pub device_on: bool,
-    /// The time in seconds this device has been ON since the last state change (ON/OFF).
+    /// The time in seconds this device has been ON since the last state change (On/Off).
     /// On v2 hardware this is always None.
     pub on_time: Option<u64>,
     pub nickname: String,

@@ -4,9 +4,132 @@ All notable changes to this project will be documented in this
 file. This change log follows the conventions of
 [keepachangelog.com][keepachangelog].
 
-## [Rust Unreleased][Unreleased]
+## [Unreleased][Unreleased]
 
-## [Python Unreleased][Unreleased]
+### Rust
+
+### Python
+
+## [v0.8.0][v0.8.0] - 2024-12-07
+
+This marks the first unified release of the Rust and Python libraries. Moving forward, both libraries will be released simultaneously and will share the same version number.
+
+### Rust
+
+#### Added
+
+- Added an example for the L900 light strips.
+
+#### Changed
+
+- `LightingEffect`'s `fadeoff` field has been renamed to `fade_off`, and its `with_fadeoff` method has been renamed to `with_fade_off`.
+- `LightingEffect`'s `new_with_random_id` function has been removed. The `new` function now creates a `LightingEffect` instance with a random ID by default.
+
+### Python
+
+#### Added
+
+- Added support for the L900 light strips.
+- Added support for the L920 and L930 light strips.
+- Added support for Python 3.13.
+
+## [Python v0.7.0][py-v0.7.0] - 2024-11-07
+
+### Added
+
+- Added support for the KE100 thermostatic radiator valve (TRV).
+
+## [Rust v0.7.17][v0.7.17] - 2024-10-23
+
+### Added
+
+- Added support for the P304 power strip.
+
+### Changed
+
+- The `openssl` dependency has been replaced with native Rust alternatives to expand cross-compilation options, such as for Android, and to decrease build times (thanks to @rbock44).
+- `PlugPowerStripHandler` has been renamed to `PowerStripPlugHandler` to be consistent with the rest of the library.
+- `PlugPowerStripResult` has been renamed to `PowerStripPlugResult` to be consistent with the rest of the library.
+- The `UsageByPeriodResult` fields `today`, `past7`, and `past30` have been updated to `Option<u64>` to handle cases where the API returns negative values, which will be represented as `None`.
+
+### Fixed
+
+- Updated all comments referencing Watts to confirm the correct units are specified.
+
+## [Python v0.6.0][py-v0.6.0] - 2024-10-23
+
+### Added
+
+- Added support for the P300 and P304 power strips.
+- Python logs can now capture entries from the underlying Rust library.
+
+### Changed
+
+- The `openssl` dependency has been replaced with native Rust alternatives to expand cross-compilation options, such as for Android, and to decrease build times (thanks to @rbock44).
+- The `UsageByPeriodResult` fields `today`, `past7`, and `past30` have been updated to `Optional[int]` to handle cases where the API returns negative values, which will be represented as `null`.
+
+### Fixed
+
+- Updated all comments referencing Watts to confirm the correct units are specified.
+
+## [Rust v0.7.16][v0.7.16] - 2024-09-27
+
+### Added
+
+- Added support for the L535 light bulbs.
+
+### Fixed
+
+- Fixed an issue that prevented the color from being set properly for the L535 light bulbs.
+
+## [Python v0.5.1][py-v0.5.1] - 2024-09-27
+
+### Added
+
+- Added support for the L535 light bulbs.
+
+### Fixed
+
+- Fixed an issue that prevented the color from being set properly for the L535 light bulbs.
+
+## [Rust v0.7.15][v0.7.15] - 2024-09-18
+
+### Added
+
+- The `LowBattery` variant has been added to the `S200BLog` enum.
+
+### Changed
+
+- The `t310` and `t315` methods of `HubHandler` can now create `T31XHandler` handlers for either of the two device types.
+- The child device handlers for the H100 hub and the P300 power strip have been redesigned to eliminate the use of lifetimes, to facilitate FFI integrations.
+- The comments of `start_timestamp` and `end_timestamp` fields in `EnergyDataResult` have been updated to better describe their purpose.
+- `S200BRotationParams`'s field `degrees` has been renamed to `rotation_degrees`.
+
+### Fixed
+
+- Fixed an issue with the `Color` presets that triggered a validation error when attempting to set the `color` to `DarkRed`.
+
+### Removed
+
+- The deprecated `past24h`, `past7d`, `past30d` and `past1y` fields have been removed from `EnergyUsageResult`. This data is now available exclusively through `get_energy_data`'s `EnergyDataResult` response.
+
+## [Python v0.5.0][py-v0.5.0] - 2024-09-18
+
+### Added
+
+- Added full support for the S200B switches through the `S200BHandler` handler.
+- Added full support for the T100 sensors through the `T100Handler` handler.
+- Added full support for the T110 sensors through the `T110Handler` handler.
+- Added full support for the T300 sensors through the `T300Handler` handler.
+- Added full support for the T310 and T315 sensors through the `T31XHandler` handler.
+
+### Changed
+
+- The comments of `start_timestamp` and `end_timestamp` fields in `EnergyDataResult` have been updated to better describe their purpose.
+
+### Fixed
+
+- Fixed an issue with the `Color` presets that triggered a validation error when attempting to set the `color` to `DarkRed`.
 
 ## [Rust v0.7.14][v0.7.14] - 2024-08-31
 
@@ -400,6 +523,14 @@ let device = ApiClient::new(ip_address, tapo_username, tapo_password)?
 ### Initial Release of Tapo
 
 [Unreleased]: https://github.com/mihai-dinculescu/tapo
+[v0.8.0]: https://github.com/mihai-dinculescu/tapo/tree/v0.8.0
+[py-v0.7.0]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.7.0
+[v0.7.17]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.17
+[py-v0.6.0]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.6.0
+[v0.7.16]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.16
+[py-v0.5.1]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.5.1
+[v0.7.15]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.15
+[py-v0.5.0]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.5.0
 [v0.7.14]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.14
 [py-v0.4.0]: https://github.com/mihai-dinculescu/tapo/tree/py-v0.4.0
 [v0.7.13]: https://github.com/mihai-dinculescu/tapo/tree/v0.7.13

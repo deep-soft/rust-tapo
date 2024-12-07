@@ -1,7 +1,9 @@
+use std::ops::RangeInclusive;
+
 use serde::Serialize;
 
 use crate::error::Error;
-use crate::requests::color::{Color, COLOR_MAP};
+use crate::requests::{Color, COLOR_MAP};
 use crate::HandlerExt;
 
 /// Builder that is used by the [`crate::ColorLightHandler::set`] API to set multiple properties in a single request.
@@ -92,10 +94,14 @@ impl ColorLightSetDeviceInfoParams {
     }
 
     /// Performs a request to apply the changes to the device.
-    pub async fn send(self, client: &impl HandlerExt) -> Result<(), Error> {
+    ///
+    /// # Arguments
+    ///
+    /// * `handler` - `ColorLightHandler`, `RgbLightStripHandler`, or `RgbicLightStripHandler` instance
+    pub async fn send(self, handler: &impl HandlerExt) -> Result<(), Error> {
         self.validate()?;
         let json = serde_json::to_value(&self)?;
-        client.get_client().set_device_info(json).await
+        handler.get_client().set_device_info(json).await
     }
 }
 
@@ -145,10 +151,20 @@ impl ColorLightSetDeviceInfoParams {
             }
         }
 
+        if (self.saturation.is_some() && self.hue.is_none())
+            || (self.hue.is_some() && self.saturation.is_none())
+        {
+            return Err(Error::Validation {
+                field: "hue_saturation".to_string(),
+                message: "hue and saturation must either be both set or unset".to_string(),
+            });
+        }
+
+        const COLOR_TEMPERATURE_RANGE: RangeInclusive<u16> = 2500..=6500;
         if let Some(color_temperature) = self.color_temperature {
-            if self.hue.unwrap_or_default() == 0
-                && self.saturation.unwrap_or(100) == 100
-                && !(2500..=6500).contains(&color_temperature)
+            if self.hue.is_none()
+                && self.saturation.is_none()
+                && !COLOR_TEMPERATURE_RANGE.contains(&color_temperature)
             {
                 return Err(Error::Validation {
                     field: "color_temperature".to_string(),
@@ -271,19 +287,33 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn color_temperature_validation() {
+    async fn color_temperature_validation_low() {
         let params: ColorLightSetDeviceInfoParams = ColorLightSetDeviceInfoParams::new();
         let result = params.color_temperature(2499).send(&MockHandler).await;
         assert!(matches!(
             result.err(),
             Some(Error::Validation { field, message }) if field == "color_temperature" && message == "must be between 2500 and 6500"
         ));
+    }
 
+    #[tokio::test]
+    async fn color_temperature_validation_high() {
         let params = ColorLightSetDeviceInfoParams::new();
         let result = params.color_temperature(6501).send(&MockHandler).await;
         assert!(matches!(
             result.err(),
             Some(Error::Validation { field, message }) if field == "color_temperature" && message == "must be between 2500 and 6500"
         ));
+    }
+
+    #[tokio::test]
+    async fn color_temperature_validation_default_hue_saturation() {
+        let params: ColorLightSetDeviceInfoParams = ColorLightSetDeviceInfoParams::new();
+        let result = params
+            .color_temperature(2500)
+            .hue_saturation(0, 100)
+            .send(&MockHandler)
+            .await;
+        assert!(result.is_ok());
     }
 }
